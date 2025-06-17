@@ -43,7 +43,7 @@ class ShoppingCartsController < ApplicationController
   end
 
   def pay
-    raise 'alreay paid' if @shopping_cart.paid?
+    raise "alreay paid" if @shopping_cart.paid?
     @shopping_cart.pay
     head :ok
   rescue
