@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApiFront
   class ShoppingCart < ActiveResource::Base
     self.include_format_in_path = false

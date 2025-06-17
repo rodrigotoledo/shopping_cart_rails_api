@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class ShoppingCart < ApplicationRecord
-  enum :status, [:pending, :paid]
+  enum :status, [ :pending, :paid ]
   has_many :shopping_cart_items
   accepts_nested_attributes_for :shopping_cart_items
 

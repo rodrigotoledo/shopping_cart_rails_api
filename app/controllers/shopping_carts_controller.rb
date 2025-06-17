@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ShoppingCartsController < ApplicationController
   before_action :set_shopping_cart, only: %i[ show update pay ]
 
@@ -6,10 +8,10 @@ class ShoppingCartsController < ApplicationController
     shopping_carts = ShoppingCart.includes(:shopping_cart_items).order(created_at: :desc)
 
     render json: shopping_carts.as_json(
-      only: [:id, :customer, :status, :created_at, :updated_at],
+      only: [ :id, :customer, :status, :created_at, :updated_at ],
       include: {
         shopping_cart_items: {
-          only: [:id, :product, :quantity, :price]
+          only: [ :id, :product, :quantity, :price ]
         }
       }
     )
@@ -28,10 +30,10 @@ class ShoppingCartsController < ApplicationController
 
   def show
     render json: @shopping_cart.as_json(
-      only: [:id, :customer, :status, :created_at, :updated_at],
+      only: [ :id, :customer, :status, :created_at, :updated_at ],
       include: {
         shopping_cart_items: {
-          only: [:id, :product, :quantity, :price]
+          only: [ :id, :product, :quantity, :price ]
         }
       }
     )
@@ -42,13 +44,12 @@ class ShoppingCartsController < ApplicationController
 
   # PATCH/PUT /shopping_carts/1
   def update
-    
     if @shopping_cart.update(shopping_cart_params)
       render json: @shopping_cart.as_json(
-        only: [:id, :customer, :status, :created_at, :updated_at],
+        only: [ :id, :customer, :status, :created_at, :updated_at ],
         include: {
           shopping_cart_items: {
-            only: [:id, :product, :quantity, :price]
+            only: [ :id, :product, :quantity, :price ]
           }
         }
       )
@@ -61,10 +62,10 @@ class ShoppingCartsController < ApplicationController
     shopping_carts = ShoppingCart.includes(:shopping_cart_items).paid
 
     render json: shopping_carts.as_json(
-      only: [:id, :customer, :status, :created_at, :updated_at],
+      only: [ :id, :customer, :status, :created_at, :updated_at ],
       include: {
         shopping_cart_items: {
-          only: [:id, :product, :quantity, :price]
+          only: [ :id, :product, :quantity, :price ]
         }
       }
     )
@@ -86,6 +87,6 @@ class ShoppingCartsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def shopping_cart_params
-      params.require(:shopping_cart).permit(:customer, shopping_cart_items_attributes: [:id, :product, :quantity, :price])
+      params.require(:shopping_cart).permit(:customer, shopping_cart_items_attributes: [ :id, :product, :quantity, :price ])
     end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 10.times.each do
   shopping_cart = ShoppingCart.create!(customer: Faker::Name.name_with_middle)
   (1..5).map do
