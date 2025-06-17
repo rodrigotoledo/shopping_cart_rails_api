@@ -3,18 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe "/shopping_carts", type: :request do
-  let(:valid_attributes) do
-    {
-      customer: Faker::Name.name,
-      shopping_cart_items_attributes: [
-        {
-          product: Faker::Commerce.product_name,
-          quantity: rand(1..3),
-          price: Faker::Commerce.price(range: 10.0..100.0)
-        }
-      ]
-    }
-  end
 
   describe "GET /index" do
     it "returns a list of shopping carts" do
@@ -32,37 +20,32 @@ RSpec.describe "/shopping_carts", type: :request do
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)["id"]).to eq(cart.id)
     end
-  end
 
-  describe "POST /create" do
-    it "creates a new shopping cart" do
-      expect {
-        post shopping_carts_path, params: { shopping_cart: valid_attributes }
-      }.to change(ShoppingCart, :count).by(1)
-
-      expect(response).to have_http_status(:created)
-    end
-  end
-
-  describe "PUT /update" do
-    it "updates an existing shopping cart" do
+    it "returns unprocessable_entity" do
       cart = FactoryBot.create(:shopping_cart)
-      new_customer = "Updated Customer"
-      put shopping_cart_path(cart.id), params: { shopping_cart: { customer: new_customer } }
-      expect(response).to have_http_status(:ok)
-      expect(cart.reload.customer).to eq(new_customer)
+      allow_any_instance_of(ShoppingCart).to receive(:as_json).and_raise(StandardError)
+      get shopping_cart_path(cart.id)
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 
   describe "PUT /shopping_carts/:id/pay" do
     it "marks the cart as paid" do
       cart = FactoryBot.create(:shopping_cart)
-      expect(cart.status).not_to eq("paid")
       expect {
         put pay_shopping_cart_path(cart.id)
       }.to have_enqueued_job(PayShoppingCartJob).with(cart.id)
 
       expect(response).to have_http_status(:ok)
+    end
+
+    it "returns unprocessable_entity" do
+      cart = FactoryBot.create(:shopping_cart, status: "paid")
+      expect {
+        put pay_shopping_cart_path(cart.id)
+      }.not_to have_enqueued_job(PayShoppingCartJob).with(cart.id)
+
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 

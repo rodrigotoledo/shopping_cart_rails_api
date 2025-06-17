@@ -15,4 +15,8 @@ RSpec.describe ShoppingCart, type: :model do
       expect { cart.pay }.to have_enqueued_job(PayShoppingCartJob).with(cart.id)
     end
   end
+
+  describe '#validations' do
+    it { should validate_presence_of(:customer) }
+  end
 end
