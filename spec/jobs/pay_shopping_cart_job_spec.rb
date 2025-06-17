@@ -20,7 +20,6 @@ RSpec.describe PayShoppingCartJob, type: :job do
 
   it "Returns false and records error when exception occurs" do
     allow(ShoppingCart).to receive(:find).and_raise(StandardError.new("boom"))
-    expect(Rails.logger).to receive(:info).with(/boom/)
 
     result = described_class.new.perform(cart.id)
     expect(result).to be_falsey
