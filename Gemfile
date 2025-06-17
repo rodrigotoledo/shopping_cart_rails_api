@@ -49,6 +49,14 @@ group :development, :test do
   gem "rufo"
   gem "faker"
   gem "rspec-rails", "~> 8.0.0"
+  gem "factory_bot_rails"
+  gem "guard-rspec", require: false
+end
+
+group :test do
+  gem "shoulda-matchers", "~> 6.0"
+  gem "simplecov", require: false
+  gem "webmock"
 end
 
 gem "activeresource"
