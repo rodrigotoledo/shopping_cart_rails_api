@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe "/shopping_carts", type: :request do
-
   describe "GET /index" do
     it "returns a list of shopping carts" do
       FactoryBot.create_list(:shopping_cart, 2)
