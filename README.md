@@ -3,7 +3,7 @@ Start with
 ```bash
 rails db:prepare
 rails db:migrate db:seed
-rails s
+bin/dev
 ```
 
 and after
