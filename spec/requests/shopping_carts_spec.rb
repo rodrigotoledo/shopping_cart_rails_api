@@ -29,20 +29,26 @@ RSpec.describe "/shopping_carts", type: :request do
   end
 
   describe "PUT /shopping_carts/:id/pay" do
+    let(:cart) { FactoryBot.create(:shopping_cart) }
+
     it "marks the cart as paid" do
-      cart = FactoryBot.create(:shopping_cart)
+      PayShoppingCartJob.clear
+
       expect {
         put pay_shopping_cart_path(cart.id)
-      }.to have_enqueued_job(PayShoppingCartJob).with(cart.id)
+      }.to change { PayShoppingCartJob.jobs.size }.by(1)
 
+      expect(PayShoppingCartJob.jobs.last['args']).to eq([ cart.id ])
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns unprocessable_entity" do
-      cart = FactoryBot.create(:shopping_cart, status: "paid")
+    it "returns unprocessable_entity when cart is already paid" do
+      paid_cart = FactoryBot.create(:shopping_cart, status: "paid")
+      PayShoppingCartJob.clear
+
       expect {
-        put pay_shopping_cart_path(cart.id)
-      }.not_to have_enqueued_job(PayShoppingCartJob).with(cart.id)
+        put pay_shopping_cart_path(paid_cart.id)
+      }.not_to change { PayShoppingCartJob.jobs.size }
 
       expect(response).to have_http_status(:unprocessable_entity)
     end
