@@ -61,3 +61,7 @@ end
 
 gem "activeresource"
 gem "sidekiq"
+gem "oj"
+gem "puma_worker_killer"
+gem "activerecord-import"
+gem "rack-timeout"
