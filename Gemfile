@@ -48,7 +48,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
   gem "rufo"
   gem "faker"
-  gem "rspec-rails", "~> 8.0.0"
+  gem "rspec-rails", "~> 8.0.1"
   gem "factory_bot_rails"
   gem "guard-rspec", require: false
 end
