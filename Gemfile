@@ -6,6 +6,7 @@ source "https://rubygems.org"
 gem "rails", "~> 8.0.2"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 2.1"
+gem "pg"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
@@ -59,3 +60,4 @@ group :test do
 end
 
 gem "activeresource"
+gem "sidekiq"
