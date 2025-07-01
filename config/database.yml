@@ -1,10 +1,14 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
-#
 default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "postgres") %>
+  timeout: 5000
+
+sqlite: &sqlite
   adapter: sqlite3
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
@@ -12,38 +16,46 @@ default: &default
 development:
   primary:
     <<: *default
-    database: storage/development.sqlite3
+    database: <%= "#{ENV.fetch('APPLICATION_NAME', 'app_db')}" %>_development
+    username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+    password: <%= ENV.fetch("POSTGRES_PASSWORD", "postgres") %>
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  cache:
+    <<: *sqlite
+    database: storage/development_cache.sqlite3
+    migrations_paths: db/cache_migrate
   queue:
-    <<: *default
+    <<: *sqlite
     database: storage/development_queue.sqlite3
     migrations_paths: db/queue_migrate
   cable:
-    <<: *default
+    <<: *sqlite
     database: storage/development_cable.sqlite3
     migrations_paths: db/cable_migrate
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: <%= "#{ENV.fetch('APPLICATION_NAME', 'app_db')}" %>_test
+  username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD", "postgres") %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
 
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
 production:
-  primary:
-    <<: *default
-    database: storage/production.sqlite3
+  primary: &primary_production
+    adapter: postgresql
+    encoding: unicode
+    timeout: 5000
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+    url: <%= ENV.fetch("DATABASE_URL", 'url_production_database') %>
   cache:
-    <<: *default
-    database: storage/production_cache.sqlite3
+    <<: *sqlite
+    database: production_cache.sqlite3
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
     database: storage/production_queue.sqlite3
     migrations_paths: db/queue_migrate
   cable:
-    <<: *default
+    <<: *sqlite
     database: storage/production_cable.sqlite3
     migrations_paths: db/cable_migrate
