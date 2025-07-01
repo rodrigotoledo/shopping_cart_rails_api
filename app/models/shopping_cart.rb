@@ -7,6 +7,6 @@ class ShoppingCart < ApplicationRecord
   validates :customer, presence: true
 
   def pay
-    PayShoppingCartJob.perform_later(id)
+    PayShoppingCartJob.perform_async(id)
   end
 end

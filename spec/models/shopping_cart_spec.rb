@@ -7,12 +7,15 @@ RSpec.describe ShoppingCart, type: :model do
   it { is_expected.to define_enum_for(:status).with_values(%i[pending paid]).backed_by_column_of_type(:integer) }
 
   describe "#pay" do
-    include ActiveJob::TestHelper
+    let(:cart) { FactoryBot.create(:shopping_cart) }
 
-    it "PayshoppingCartjob with the cart id" do
-      cart = FactoryBot.create(:shopping_cart)
+    it "enqueues PayShoppingCartJob with the cart id" do
+      expect {
+        cart.pay
+      }.to change { PayShoppingCartJob.jobs.size }.by(1)
 
-      expect { cart.pay }.to have_enqueued_job(PayShoppingCartJob).with(cart.id)
+      enqueued_job = PayShoppingCartJob.jobs.last
+      expect(enqueued_job['args']).to eq([ cart.id ])
     end
   end
 

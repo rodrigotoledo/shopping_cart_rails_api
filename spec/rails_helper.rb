@@ -5,6 +5,8 @@ SimpleCov.start
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
@@ -74,4 +76,16 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.before(:each) do
+    Sidekiq::Worker.clear_all
+  end
+
+  config.before(:each, sidekiq: true) do
+    Sidekiq::Testing.fake!
+  end
+
+  config.before(:each, sidekiq_inline: true) do
+    Sidekiq::Testing.inline!
+  end
 end
