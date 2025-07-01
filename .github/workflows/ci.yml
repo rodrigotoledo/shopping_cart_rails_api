@@ -67,6 +67,7 @@ jobs:
           curl \
           libvips \
           sqlite3 \
+          libpq-dev \
           libsqlite3-dev \
           libgraphicsmagick1-dev \
           pkg-config
